@@ -23,7 +23,9 @@ class ScenePreload extends Phaser.Scene
 
     create(){
         console.log("Preload scene");
-        this.scene.start("level"); //change to caramel later (avoiding loading time)
+       
+        //this.scene.launch("level", { param1: value1, param2: value2 });
+        this.scene.launch("level", { a: "test" }); //change to caramel later (avoiding loading time)
     }
     update(){
     }

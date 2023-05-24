@@ -5,9 +5,11 @@ class SceneLevel extends Phaser.Scene{
         super("level");  
         
     }
-    init(){
-        
-    }
+    init(data) {
+        let a = data?.a; // Utilisation de l'opérateur de chaînage optionnel (?.) pour vérifier si data existe
+        console.log(a); // Affiche "test"
+      }
+      
     preload ()
     {    
     } 
@@ -15,27 +17,32 @@ class SceneLevel extends Phaser.Scene{
     {
         console.log("Game scene");
         
+        
         this.h = game.scale.height;
         this.w = game.scale.width; 
         
-        //CREATION DE LA MAP
+        //CREATION DE LA MAP, factory plus tard
         this.mapping();
 
-        //AJOUT DE LA BALLE
+        this.lifeManager = new LifeManager();
+        this.lifeManager.init(this, 1);
+
+        //AJOUT DE LA BALLE ( a mettre en poo si temps)
         this.player_add();
 
         // GESTION DU DRAG AND DROP
         this.dragging_ball ();
 
-        // AJOUT DES COLLECTIBLES ET DE LEURS DETECTIONS
+        // AJOUT DES COLLECTIBLES ET DE LEURS DETECTIONS (dans factory plus tard, changera en fct du lvl)
         this.add_collectibles();
         
     }
 
     update(){
-        //test si la balle est en dehors de l'écran, si oui, alors on la replace au centre
+        //test si la balle est en dehors de l'écran, si oui, alors on la replace au centre et on perd une vie
         if(this.ball.x > game.scale.width || this.ball.x < 0 || this.ball.y > game.scale.height || this.ball.y < 0){
             //console.log("outOfBounds")
+            this.lifeManager.decreaseLife();
             this.ball.x = game.scale.width/2;
             this.ball.y = game.scale.height/6 * 5
             this.ball.setVelocity(0, 0);
@@ -135,6 +142,10 @@ class SceneLevel extends Phaser.Scene{
         this.physics.add.overlap(this.ball, this.star, (ball, star)=>{
             this.cameras.main.flash();
             star.destroy();
+            this.lifeManager.Collected();
+            this.ball.x = game.scale.width/2;
+            this.ball.y = game.scale.height/6 * 5
+            this.ball.setVelocity(0, 0);
         });
 
         
