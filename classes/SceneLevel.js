@@ -5,9 +5,8 @@ class SceneLevel extends Phaser.Scene{
         super("level");  
         
     }
-    init(data) {
-        let a = data?.a; // Utilisation de l'opérateur de chaînage optionnel (?.) pour vérifier si data existe
-        console.log(a); // Affiche "test"
+    init() {
+        
       }
       
     preload ()
@@ -23,32 +22,56 @@ class SceneLevel extends Phaser.Scene{
         
         //CREATION DE LA MAP, factory plus tard
         this.mapping();
+        console.log("mapping done");
+        
 
-        this.lifeManager = new LifeManager();
-        this.lifeManager.init(this, 1);
-
-        //AJOUT DE LA BALLE ( a mettre en poo si temps)
+        //AJOUT DE LA BALLE ( à mettre en poo si temps)
         this.player_add();
+        console.log("player added");
 
+        //AJOUT DU GESTIONAIRE
+        //check si lifeManager existe, sinon le créer
+        if(this.lifeManager == undefined) this.lifeManager = new LifeManager(); // you can use a life manager with an life class, the manager keeping track of lifes, 
+                                              //making multiples lifes for mulitples objects, but since there will be only one ball (eq. player), i don't.
+                                              //but that's why i kept a init function and a new lifeManager separated, if needed.
+        this.lifeManager.init(this, 1,3,this.ball);
+
+        
         // GESTION DU DRAG AND DROP
         this.dragging_ball ();
+        console.log("dragging done");
 
         // AJOUT DES COLLECTIBLES ET DE LEURS DETECTIONS (dans factory plus tard, changera en fct du lvl)
         this.add_collectibles();
-        
+        console.log("collectibles added");
+
+        this.add_buttons();    
+        console.log("buttons added");
+
     }
 
     update(){
         //test si la balle est en dehors de l'écran, si oui, alors on la replace au centre et on perd une vie
-        if(this.ball.x > game.scale.width || this.ball.x < 0 || this.ball.y > game.scale.height || this.ball.y < 0){
+        if(this.ball.x > game.scale.width || this.ball.x < 0 || this.ball.y > this.h || this.ball.y < 0){
             //console.log("outOfBounds")
-            this.lifeManager.decreaseLife();
+            this.lifeManager.decreaseLife(); // here if life manager is a real manager (wich is not rn) add obj reference.
             this.ball.x = game.scale.width/2;
-            this.ball.y = game.scale.height/6 * 5
+            this.ball.y = this.h/6 * 5
             this.ball.setVelocity(0, 0);
         }
-      
-        
+        let state = this.lifeManager.getCurrentState();
+        switch(state){
+            case 'WIN':
+                this.scene.start("End", {res:1, vie:this.lifeManager.getLife()});
+                break;
+            case 'GAME_OVER':
+                this.scene.start("End", {res:0, vie:this.lifeManager.getLife()});
+                break;
+            //paused si besoin ici
+            default:
+                break;
+        }
+
     }
     mapping(){
         //Tile sizing : 20x40 en 16px
@@ -67,7 +90,14 @@ class SceneLevel extends Phaser.Scene{
         Align.scaleToGameW(this.layer,1);
         Align.scaleToGameW(this.layer_map,1);
 
-    
+        //new tiles walls loading for a better look with the css background
+        const ship = this.make.tilemap({key:"ship",tileWidth:16,tileHeight:16});
+        const ship_tileset = ship.addTilesetImage("ship32x32","ship_tiles");  
+        
+        this.ship_layer = ship.createLayer("shipwalls",ship_tileset,0,0);
+        this.ship_layer.setOrigin(this.w/2,this.h/2);
+        Align.scaleToGameW(this.ship_layer,1);
+
     }
     player_add(){
         //PARTICULES
@@ -93,7 +123,7 @@ class SceneLevel extends Phaser.Scene{
             .setCollideWorldBounds(false)
             .setVelocity(0, 0);
         this.ball.body.onOverlap = true;
-
+        
 
 
         //PARTICULES following ball       
@@ -107,7 +137,7 @@ class SceneLevel extends Phaser.Scene{
         var currentDistance;
         var angle;
         var ball = this.ball;
-
+        let moved = false;
 
         this.input.on('pointerdown', function (pointer) {
             startPoint = new Phaser.Math.Vector2(pointer.x, pointer.y);
@@ -116,6 +146,7 @@ class SceneLevel extends Phaser.Scene{
 
         this.input.on('pointermove', function (pointer) {
             if (!startPoint) return;
+            moved = true;
 
             let res = trajectoire(graphics, startPoint, pointer, ball);
             currentDistance = res[0] ;
@@ -124,9 +155,12 @@ class SceneLevel extends Phaser.Scene{
         });
 
         this.input.on('pointerup',  (pointer) => {
+            if (moved) {
             graphics.clear();
             shoot(ball, coef, currentDistance, angle); 
             startPoint = null;
+            moved = false;
+            }
         });
     }
     add_collectibles(){
@@ -144,11 +178,29 @@ class SceneLevel extends Phaser.Scene{
             star.destroy();
             this.lifeManager.Collected();
             this.ball.x = game.scale.width/2;
-            this.ball.y = game.scale.height/6 * 5
+            this.ball.y = this.h/6 * 5
             this.ball.setVelocity(0, 0);
-        });
+        }); 
 
         
+    }
+    add_buttons(){
+         // display the button reload on the top right and the menu button on the top left
+         this.reload = this.add.image(this.w/20 * 19 -45, this.h/20 +15, 'reload_button');
+         Align.scaleToGameW(this.reload, 0.12);
+         this.reload.setInteractive();
+         this.reload.on('pointerup', () => {
+             this.scene.restart();
+                 }
+         );
+         this.menu = this.add.image(this.w/20 +45, this.h/20 +10, 'menu');
+         Align.scaleToGameW(this.menu, 0.12);
+         this.menu.setInteractive();
+         this.menu.on('pointerdown', () => {
+             //this.scene.start("Menu");
+             console.log("menu");
+         }
+         );
     }
 }
 // ****************************** Functions *************************** 
