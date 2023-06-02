@@ -9,7 +9,7 @@ const config ={
     },
     
     type: Phaser.AUTO,
-    //transparent: true,
+    transparent: true,
     pixelArt: true,
     physics : {default : "arcade", arcade:{debug: true}},
 
@@ -17,7 +17,8 @@ const config ={
             ScenePreload,
             SceneCaramel,
             SceneLevel, 
-            SceneEnd
+            SceneEnd,
+            SceneMenu
         ]
 
 };

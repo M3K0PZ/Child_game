@@ -5,8 +5,8 @@ class SceneLevel extends Phaser.Scene{
         super("level");  
         
     }
-    init() {
-        
+    init(data) {
+        let level = data?.level; // level number  (to be used in factory to create the level layout)
       }
       
     preload ()
@@ -14,20 +14,23 @@ class SceneLevel extends Phaser.Scene{
     } 
     create () 
     {
-        console.log("Game scene");
-        
+        ////console.log("Game scene");
+        this.music = this.sound.add('Level_sound');
+        this.music.play();
+        this.music.loop = true;
+        this.music.volume = 0.1; // volume ici 
         
         this.h = game.scale.height;
         this.w = game.scale.width; 
         
         //CREATION DE LA MAP, factory plus tard
         this.mapping();
-        console.log("mapping done");
+        //console.log("mapping done");
         
 
         //AJOUT DE LA BALLE ( à mettre en poo si temps)
         this.player_add();
-        console.log("player added");
+        //console.log("player added");
 
         //AJOUT DU GESTIONAIRE
         //check si lifeManager existe, sinon le créer
@@ -39,21 +42,21 @@ class SceneLevel extends Phaser.Scene{
         
         // GESTION DU DRAG AND DROP
         this.dragging_ball ();
-        console.log("dragging done");
+        //console.log("dragging done");
 
         // AJOUT DES COLLECTIBLES ET DE LEURS DETECTIONS (dans factory plus tard, changera en fct du lvl)
         this.add_collectibles();
-        console.log("collectibles added");
+        //console.log("collectibles added");
 
         this.add_buttons();    
-        console.log("buttons added");
+        //console.log("buttons added");
 
     }
 
     update(){
         //test si la balle est en dehors de l'écran, si oui, alors on la replace au centre et on perd une vie
         if(this.ball.x > game.scale.width || this.ball.x < 0 || this.ball.y > this.h || this.ball.y < 0){
-            //console.log("outOfBounds")
+            ////console.log("outOfBounds")
             this.lifeManager.decreaseLife(); // here if life manager is a real manager (wich is not rn) add obj reference.
             this.ball.x = game.scale.width/2;
             this.ball.y = this.h/6 * 5
@@ -62,9 +65,11 @@ class SceneLevel extends Phaser.Scene{
         let state = this.lifeManager.getCurrentState();
         switch(state){
             case 'WIN':
+                this.music.stop();
                 this.scene.start("End", {res:1, vie:this.lifeManager.getLife()});
                 break;
             case 'GAME_OVER':
+                this.music.stop();
                 this.scene.start("End", {res:0, vie:this.lifeManager.getLife()});
                 break;
             //paused si besoin ici
@@ -128,7 +133,7 @@ class SceneLevel extends Phaser.Scene{
 
         //PARTICULES following ball       
         emitter.startFollow(this.ball);
-        console.log("emmitter");
+        //console.log("emmitter");
     }
     dragging_ball (){
         let graphics = this.add.graphics();
@@ -190,6 +195,7 @@ class SceneLevel extends Phaser.Scene{
          Align.scaleToGameW(this.reload, 0.12);
          this.reload.setInteractive();
          this.reload.on('pointerup', () => {
+            this.music.stop();
              this.scene.restart();
                  }
          );
@@ -197,8 +203,9 @@ class SceneLevel extends Phaser.Scene{
          Align.scaleToGameW(this.menu, 0.12);
          this.menu.setInteractive();
          this.menu.on('pointerdown', () => {
-             //this.scene.start("Menu");
-             console.log("menu");
+            this.music.stop();
+             this.scene.start("Menu");
+             
          }
          );
     }

@@ -21,6 +21,10 @@ class SceneEnd extends Phaser.Scene
         this.partcle;
         //display lose or win scene depending on res, 0 or 1, and the life count
         if(this.res == 1){
+            this.music = this.sound.add('Win_sound');
+            this.music.play();
+            this.music.loop = true;
+            this.music.volume = 0.1; // volume ici 
             this.particle = 'coupe';
         switch(this.vie){
             case 1:
@@ -38,6 +42,11 @@ class SceneEnd extends Phaser.Scene
                 break;
         }
     }else{
+        this.music = this.sound.add('End_sound');
+        this.music.play();
+        this.music.loop = true;
+        this.music.volume = 0.1; // volume ici 
+
         this.particle = 'croix';
 
         this.res_image = this.add.image(width/2,  height/2, 'loose');
@@ -61,9 +70,20 @@ class SceneEnd extends Phaser.Scene
         
         this.reload.setInteractive();
         this.reload.on('pointerup', () => {
+            this.music.stop();
             this.scene.start("level");
                 }
         ); 
+        //display the button menu
+        this.menu = this.add.image(this.w/20 +45, this.h/20 +10, 'menu');
+         Align.scaleToGameW(this.menu, 0.12);
+         this.menu.setInteractive();
+         this.menu.on('pointerdown', () => {
+            this.music.stop();
+             this.scene.start("Menu");
+             
+         }
+         );
 
         //display the button next 
         this.next = this.add.image(width/20 * 10 + 45, height/20 *13 - 27, 'next_button');
@@ -71,6 +91,7 @@ class SceneEnd extends Phaser.Scene
         
         this.next.setInteractive();
         this.next.on('pointerup', () => {
+            this.music.stop();
             this.scene.start("level");
                 }
         );

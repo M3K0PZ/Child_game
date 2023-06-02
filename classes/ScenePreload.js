@@ -30,6 +30,13 @@ class ScenePreload extends Phaser.Scene
         //life loading
         this.load.image('heart', 'assets/img/buttons/heart.png');
         this.load.image('empty_heart', 'assets/img/buttons/empty_heart.png');
+        //---------------scene menu-----------------
+        this.load.image('level', 'assets/img/buttons/level.png');
+        this.load.image('Sound_on', 'assets/img/buttons/sound_on.png');
+        this.load.image('Sound_off', 'assets/img/buttons/sound_off.png');
+        
+        
+
         //---------------scene end-----------------
         this.load.image('loose', 'assets/img/end/loose.png');
         this.load.image('win1', 'assets/img/end/win1.png');
@@ -39,16 +46,30 @@ class ScenePreload extends Phaser.Scene
         this.load.image('croix', 'assets/img/buttons/croix.png');
         this.load.image('coupe', 'assets/img/buttons/coupe.png');
 
-        //this.load.image('win', 'assets/img/win.png');
+        
+
         ///////////////// SOUND LOADING /////////////////////
-        //--------------- Game menu -----------------
-        this.load.audio('intro', 'assets/audio/intro.wav');
+        //--------------- Title Screen sound -----------------
+        this.load.audio('Title_sound', 'assets/audio/Title_screen.wav');
+        //--------------- buttons sound -----------------
+        this.load.audio('button_intro', 'assets/audio/button.wav');
+        this.load.audio('button', 'assets/audio/click2.wav');
+        //--------------- menu sound -----------------
+        this.load.audio('Menu_sound', 'assets/audio/menu.wav');
+        //--------------- level sound -----------------
+        this.load.audio('Level_sound', 'assets/audio/playing.wav');
+        //--------------- end sound -----------------
+        this.load.audio('End_sound', 'assets/audio/end.mp3');
+        //--------------- win sound -----------------
+        this.load.audio('Win_sound', 'assets/audio/win.wav');
+        
 
     }
 
     create(){
         console.log("Preload scene");
-        this.scene.start("End", {res:0, vie:3});
+        this.scene.start("Menu");
+        //this.scene.start("End", {res:0, vie:3});
         //this.scene.start("level");
        
 
