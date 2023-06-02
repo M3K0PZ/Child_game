@@ -22,7 +22,7 @@ class ScenePreload extends Phaser.Scene
         this.load.image('ball', 'assets/img/game/bullet.png');
         this.load.image('star', 'assets/img/game/star.png');
         //tiles loding
-        this.load.tilemapTiledJSON('map', 'assets/img/tilemap/tile1.tmj');
+      
         this.load.image('tiles', 'assets/img/tilemap/Terrain32x32.png');
        //new tiles walls loading
         this.load.tilemapTiledJSON('ship', 'assets/img/tilemap/ship_walls.tmj');
@@ -46,6 +46,20 @@ class ScenePreload extends Phaser.Scene
         this.load.image('croix', 'assets/img/buttons/croix.png');
         this.load.image('coupe', 'assets/img/buttons/coupe.png');
 
+        /////////////////// LEVELS LOADING /////////////////////
+        this.load.tilemapTiledJSON('level1', 'assets/img/tilemap/levels/level1.tmj');
+        this.load.tilemapTiledJSON('level2', 'assets/img/tilemap/levels/level2.tmj');
+        this.load.tilemapTiledJSON('level3', 'assets/img/tilemap/levels/level3.tmj');
+        this.load.tilemapTiledJSON('level4', 'assets/img/tilemap/levels/level4.tmj');
+        this.load.tilemapTiledJSON('level5', 'assets/img/tilemap/levels/level5.tmj');
+        this.load.tilemapTiledJSON('level6', 'assets/img/tilemap/levels/level6.tmj');
+        this.load.tilemapTiledJSON('level7', 'assets/img/tilemap/levels/level7.tmj');
+        this.load.tilemapTiledJSON('level8', 'assets/img/tilemap/levels/level8.tmj');
+        this.load.tilemapTiledJSON('level9', 'assets/img/tilemap/levels/level9.tmj');
+        this.load.tilemapTiledJSON('level10', 'assets/img/tilemap/levels/level10.tmj');
+        this.load.tilemapTiledJSON('level11', 'assets/img/tilemap/levels/level11.tmj');
+        this.load.tilemapTiledJSON('level12', 'assets/img/tilemap/levels/level12.tmj');
+
         
 
         ///////////////// SOUND LOADING /////////////////////
@@ -53,7 +67,7 @@ class ScenePreload extends Phaser.Scene
         this.load.audio('Title_sound', 'assets/audio/Title_screen.wav');
         //--------------- buttons sound -----------------
         this.load.audio('button_intro', 'assets/audio/button.wav');
-        this.load.audio('button', 'assets/audio/click2.wav');
+        this.load.audio('button_sound', 'assets/audio/click2.mp3');
         //--------------- menu sound -----------------
         this.load.audio('Menu_sound', 'assets/audio/menu.wav');
         //--------------- level sound -----------------
@@ -67,7 +81,7 @@ class ScenePreload extends Phaser.Scene
     }
 
     create(){
-        console.log("Preload scene");
+        //console.log("Preload scene");
         this.scene.start("Menu");
         //this.scene.start("End", {res:0, vie:3});
         //this.scene.start("level");

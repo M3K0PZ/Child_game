@@ -6,7 +6,7 @@ class SceneLevel extends Phaser.Scene{
         
     }
     init(data) {
-        let level = data?.level; // level number  (to be used in factory to create the level layout)
+        this.level_number = data?.level; // level number  (to be used in factory to create the level layout)
       }
       
     preload ()
@@ -50,7 +50,7 @@ class SceneLevel extends Phaser.Scene{
 
         this.add_buttons();    
         //console.log("buttons added");
-
+ 
     }
 
     update(){
@@ -83,8 +83,14 @@ class SceneLevel extends Phaser.Scene{
         //let tilesize_widht = w /20;
         //let tilesize_height = h/40;
 
+        //background loading
         Align.scaleToGameW(this.add.image(this.w/2,  this.h/2, 'Sky'), 1);
-        const map = this.make.tilemap({key:"map",tileWidth:16,tileHeight:16});
+
+
+        //map loading
+        var level_to_load = "level"+this.level_number;
+
+        const map = this.make.tilemap({key:level_to_load,tileWidth:16,tileHeight:16});
         const tileset = map.addTilesetImage("Terrain32x32","tiles");
 
         this.layer = map.createLayer("walls",tileset,0,0);
@@ -94,6 +100,8 @@ class SceneLevel extends Phaser.Scene{
         this.layer.setOrigin(this.w/2,this.h/2);
         Align.scaleToGameW(this.layer,1);
         Align.scaleToGameW(this.layer_map,1);
+
+        
 
         //new tiles walls loading for a better look with the css background
         const ship = this.make.tilemap({key:"ship",tileWidth:16,tileHeight:16});

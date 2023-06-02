@@ -7,7 +7,7 @@ class SceneEnd extends Phaser.Scene
     init(data) {
         this.res = data?.res;
         this.vie = data?.vie;
-        console.log("End scene");
+        //console.log("End scene");
         
     }
     preload(){
@@ -53,16 +53,7 @@ class SceneEnd extends Phaser.Scene
     }
     Align.scaleToGameH(this.res_image, 1);
    
-    //create a particle emmiter so the image 'coupe' falls al over the screen
-    // Create the particle emitter
-        
-
-        // create a particle emitter
-       
-       
-
-        
-          
+  
         // display the button reload 
         this.reload = this.add.image(width/20 * 10 -45, height/20 *13 - 27, 'reload_button');
         

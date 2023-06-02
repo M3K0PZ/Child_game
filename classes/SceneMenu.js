@@ -18,6 +18,7 @@ class SceneMenu extends Phaser.Scene {
         this.buttonSpacing = 50; // Espacement entre les boutons de niveau
         this.Scale = 6; // Facteur d'échelle des boutons de niveau
         this.music = this.sound.add('Menu_sound');
+        this.button = this.sound.add('button_sound');
     }
 
     preload() {
@@ -25,7 +26,7 @@ class SceneMenu extends Phaser.Scene {
     }
 
     create() {
-        console.log("Menu scene");
+        //console.log("Menu scene");
 
         this.h = game.scale.height;
         this.w = game.scale.width;
@@ -34,6 +35,8 @@ class SceneMenu extends Phaser.Scene {
         this.music.play();
         this.music.loop = true;
         this.music.volume = 0.1; // volume ici 
+
+        
 
         ////////////////// AJUSTEMENTS  ////////////////////////
         // Chargement de la taille de l'image du bouton
@@ -44,7 +47,7 @@ class SceneMenu extends Phaser.Scene {
 
 
 
-        //a retirer, pour les tests
+        //connait les niveaucx, et les emplacements de collectibles
         this.levels = [
             { name: "level1", collectibles: { 1: [200, 200], 2: [304, 31] } },
             { name: "level2", collectibles: { 1: [100, 400], 2: [204, 31] } },
@@ -57,10 +60,8 @@ class SceneMenu extends Phaser.Scene {
             { name: "level9", collectibles: { 1: [150, 400], 2: [164, 31] } },
             { name: "level10", collectibles: { 1: [100, 400], 2: [184, 31] } },
             { name: "level11", collectibles: { 1: [100, 400], 2: [204, 31] } },
-            { name: "level12", collectibles: { 1: [100, 400], 2: [224, 31] } },
-            { name: "level13", collectibles: { 1: [200, 400], 2: [244, 31] } },
-            { name: "level14", collectibles: { 1: [250, 400], 2: [264, 31] } },
-            { name: "level15", collectibles: { 1: [270, 400], 2: [284, 31] } },
+            { name: "level12", collectibles: { 1: [100, 400], 2: [204, 31] } },
+          
         ];
 
 
@@ -72,8 +73,10 @@ class SceneMenu extends Phaser.Scene {
         this.createLevelButtons();
 
         // Bouton pour passer à la page suivante
-        const nextButton = this.add.image(this.w - 50, this.h - 50, 'next').setInteractive();
+        const nextButton = this.add.image(this.w/3 *2 + 40, this.h/4 *3 + 55, 'next_button').setInteractive();
+        nextButton.setScale(this.Scale);   
         nextButton.on('pointerdown', () => {
+            this.button.play();
             if (this.currentPage < totalPages - 1) {
                 this.currentPage++;
                 this.updateLevelButtons();
@@ -81,11 +84,29 @@ class SceneMenu extends Phaser.Scene {
         });
 
         // Bouton pour revenir à la page précédente
-        const prevButton = this.add.image(50, this.h - 50, 'prev').setInteractive();
-        prevButton.on('pointerdown', () => {
+        const prevButton = this.add.image(this.w/3 - 60, this.h/4 *3 + 50, 'next_button').setInteractive();
+        prevButton.rotation = Phaser.Math.DegToRad(180);
+        prevButton.setScale(this.Scale); 
+        prevButton.on('pointerdown', () => { 
+            this.button.play();
             if (this.currentPage > 0) {
                 this.currentPage--;
                 this.updateLevelButtons();
+            }
+        });
+
+        // Bouton pour le son, on ou off
+        this.soundIcon = this.add.image(this.w/2 -10, this.h/9 * 8 , 'Sound_on').setInteractive();
+        this.soundIcon.setScale(this.Scale);
+        this.soundIcon.on('pointerdown', () => {
+            if (this.music.isPlaying) {
+                this.button.play();
+                this.music.pause();
+                this.soundIcon.setTexture('Sound_off');
+            } else {
+                this.button.play();
+                this.music.resume();
+                this.soundIcon.setTexture('Sound_on');
             }
         });
     }
@@ -116,8 +137,10 @@ class SceneMenu extends Phaser.Scene {
             const buttonY = gridStartY + gridY * (this.buttonSize + this.buttonSpacing);
     
             const levelButton = this.add.image(buttonX, buttonY, 'level').setScale(this.Scale).setInteractive().on('pointerdown', () => {
+                this.button.play();
                 this.music.stop();
-                this.scene.start("level", { level: i });
+                console.log("level " + (i+1) + " selected");
+                this.scene.start("level", { level: i+1 });
             });
              // Add text for level number
         const levelNumber = this.add.text(buttonX, buttonY, (i + 1).toString(), {
@@ -156,6 +179,17 @@ class SceneMenu extends Phaser.Scene {
                 ease: 'Power5'
             });
         });
+        //Animation de transition des textes de niveau
+        this.levelButtonsText.forEach(text => {
+            text.alpha = 0;
+            this.tweens.add({
+                targets: text,
+                alpha: 1,
+                duration: 600,
+                ease: 'Power5'
+            });
+        }
+        );
     }
 
     update() {
