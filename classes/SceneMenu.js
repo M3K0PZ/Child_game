@@ -5,11 +5,18 @@ class SceneMenu extends Phaser.Scene {
 
     init(data) {
         this.levels = data?.levels;
+        if (data?.sound_state) {
+            this.sound_state = data.sound_state;
+            console.log("sound_state menu = " + this.sound_state);
+        } else {
+            console.log("sound_state menu not initialzed");
+            this.sound_state = 1;
+        }
         // architecture de data.levels
         //     { name: "level1", collectibles: { 1 : [200,200], 2 :[304,031] } },
         //     { name: "level2", collectibles: { 1 : [200,200], 2 :[304,031] } },
         //...
-
+        
         this.levelButtons = [];
         this.levelButtonsText = [];
         this.currentPage = 0;
@@ -31,10 +38,10 @@ class SceneMenu extends Phaser.Scene {
         this.h = game.scale.height;
         this.w = game.scale.width;
         ////////////////// AUDIO //////////////////////// 
-        
-        this.music.play();
+        if (this.sound_state == 1) this.music.play();
         this.music.loop = true;
         this.music.volume = 0.1; // volume ici 
+        this.button.volume = 0.5; // volume ici
 
         
 
@@ -76,7 +83,7 @@ class SceneMenu extends Phaser.Scene {
         const nextButton = this.add.image(this.w/3 *2 + 40, this.h/4 *3 + 55, 'next_button').setInteractive();
         nextButton.setScale(this.Scale);   
         nextButton.on('pointerdown', () => {
-            this.button.play();
+            if (this.sound_state == 1) this.button.play();
             if (this.currentPage < totalPages - 1) {
                 this.currentPage++;
                 this.updateLevelButtons();
@@ -88,7 +95,7 @@ class SceneMenu extends Phaser.Scene {
         prevButton.rotation = Phaser.Math.DegToRad(180);
         prevButton.setScale(this.Scale); 
         prevButton.on('pointerdown', () => { 
-            this.button.play();
+            if ( this.sound_state == 1)  this.button.play();
             if (this.currentPage > 0) {
                 this.currentPage--;
                 this.updateLevelButtons();
@@ -97,15 +104,18 @@ class SceneMenu extends Phaser.Scene {
 
         // Bouton pour le son, on ou off
         this.soundIcon = this.add.image(this.w/2 -10, this.h/9 * 8 , 'Sound_on').setInteractive();
+        if (this.sound_state == -1) this.soundIcon.setTexture('Sound_off');
         this.soundIcon.setScale(this.Scale);
         this.soundIcon.on('pointerdown', () => {
             if (this.music.isPlaying) {
-                this.button.play();
+                if (this.sound_state==1) this.button.play();
+                this.sound_state = -1;
                 this.music.pause();
                 this.soundIcon.setTexture('Sound_off');
             } else {
-                this.button.play();
-                this.music.resume();
+                if (this.sound_state==1) this.button.play();
+                this.music.play();
+                this.sound_state = 1;
                 this.soundIcon.setTexture('Sound_on');
             }
         });
@@ -137,10 +147,10 @@ class SceneMenu extends Phaser.Scene {
             const buttonY = gridStartY + gridY * (this.buttonSize + this.buttonSpacing);
     
             const levelButton = this.add.image(buttonX, buttonY, 'level').setScale(this.Scale).setInteractive().on('pointerdown', () => {
-                this.button.play();
+                if (this.sound_state==1) this.sound.play('Change_sound', {volume: 0.5});
                 this.music.stop();
-                console.log("level " + (i+1) + " selected");
-                this.scene.start("level", { level: i+1 });
+                //console.log("level " + (i+1) + " selected");
+                this.scene.start("level", { level: i+1, sound_state: this.sound_state });
             });
              // Add text for level number
         const levelNumber = this.add.text(buttonX, buttonY, (i + 1).toString(), {

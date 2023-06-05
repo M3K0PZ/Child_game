@@ -76,7 +76,10 @@ class ScenePreload extends Phaser.Scene
         this.load.audio('End_sound', 'assets/audio/end.mp3');
         //--------------- win sound -----------------
         this.load.audio('Win_sound', 'assets/audio/win.wav');
-        
+        //--------------- change sound -----------------
+        this.load.audio('Change_sound', 'assets/audio/menu_change.mp3');
+        //--------------- next level sound -----------------
+        this.load.audio('Next_level', 'assets/audio/next_level.mp3');
 
     }
 

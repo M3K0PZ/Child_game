@@ -70,14 +70,14 @@ class LifeManager {
 
   checkGameOver() {
     if (this.playerLife <= 0) {
-      console.log("Game Over");
+      //console.log("Game Over");
       this.CurrentState = this.States.GAME_OVER;
       // Ajoutez ici le code pour gérer la défaite du joueur
     }
   }
 
   checkWin() {
-    console.log("Victory!");
+    //console.log("Victory!");
     this.CurrentState = this.States.WIN;
     // Ajoutez ici le code pour gérer la victoire du joueur
   }

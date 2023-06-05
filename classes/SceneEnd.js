@@ -7,7 +7,9 @@ class SceneEnd extends Phaser.Scene
     init(data) {
         this.res = data?.res;
         this.vie = data?.vie;
-        //console.log("End scene");
+        this.sound_state = data?.sound_state;
+        this.current_level = data?.level;
+       
         
     }
     preload(){
@@ -22,9 +24,11 @@ class SceneEnd extends Phaser.Scene
         //display lose or win scene depending on res, 0 or 1, and the life count
         if(this.res == 1){
             this.music = this.sound.add('Win_sound');
+            if (this.sound_state == 1){
             this.music.play();
             this.music.loop = true;
             this.music.volume = 0.1; // volume ici 
+            }
             this.particle = 'coupe';
         switch(this.vie){
             case 1:
@@ -43,10 +47,11 @@ class SceneEnd extends Phaser.Scene
         }
     }else{
         this.music = this.sound.add('End_sound');
+        if (this.sound_state == 1){
         this.music.play();
         this.music.loop = true;
-        this.music.volume = 0.1; // volume ici 
-
+        this.music.volume = 0.3; // volume ici 
+        }
         this.particle = 'croix';
 
         this.res_image = this.add.image(width/2,  height/2, 'loose');
@@ -61,17 +66,19 @@ class SceneEnd extends Phaser.Scene
         
         this.reload.setInteractive();
         this.reload.on('pointerup', () => {
+            if (this.sound_state == 1) this.sound.play('Change_sound', {volume: 0.5});
             this.music.stop();
             this.scene.start("level");
                 }
         ); 
         //display the button menu
-        this.menu = this.add.image(this.w/20 +45, this.h/20 +10, 'menu');
+        this.menu = this.add.image(width/20 +45, height/20 +10, 'menu'); // n'apparait pas (encore)
          Align.scaleToGameW(this.menu, 0.12);
          this.menu.setInteractive();
          this.menu.on('pointerdown', () => {
+            if (this.sound_state == 1) this.sound.play('Next_level', {volume: 0.1});
             this.music.stop();
-             this.scene.start("Menu");
+            this.scene.start("Menu", { sound_state: this.sound_state});
              
          }
          );
@@ -82,8 +89,10 @@ class SceneEnd extends Phaser.Scene
         
         this.next.setInteractive();
         this.next.on('pointerup', () => {
+            if (this.sound_state == 1) this.sound.play('Next_level', {volume: 0.1})
             this.music.stop();
-            this.scene.start("level");
+          
+            this.scene.start("level", {level: this.current_level+1,sound_state : this.sound_state}); // erreur ici a fix lundi
                 }
         );
 

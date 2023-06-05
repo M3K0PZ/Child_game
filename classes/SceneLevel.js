@@ -7,6 +7,9 @@ class SceneLevel extends Phaser.Scene{
     }
     init(data) {
         this.level_number = data?.level; // level number  (to be used in factory to create the level layout)
+        this.sound_state = data?.sound_state; // sound on/off
+        //console.log("level : "+this.level_number);
+        console.log("sound : "+this.sound_state);
       }
       
     preload ()
@@ -14,15 +17,24 @@ class SceneLevel extends Phaser.Scene{
     } 
     create () 
     {
+        this.cameras.main.flash();
+
         ////console.log("Game scene");
         this.music = this.sound.add('Level_sound');
-        this.music.play();
-        this.music.loop = true;
-        this.music.volume = 0.1; // volume ici 
+        if (this.sound_state == 1){
+            
+            this.music.play();
+            this.music.loop = true;
+            this.music.volume = 0.1; // volume ic
+        }
+        
+         
         
         this.h = game.scale.height;
         this.w = game.scale.width; 
-        
+  
+
+
         //CREATION DE LA MAP, factory plus tard
         this.mapping();
         //console.log("mapping done");
@@ -62,15 +74,16 @@ class SceneLevel extends Phaser.Scene{
             this.ball.y = this.h/6 * 5
             this.ball.setVelocity(0, 0);
         }
+
         let state = this.lifeManager.getCurrentState();
         switch(state){
             case 'WIN':
                 this.music.stop();
-                this.scene.start("End", {res:1, vie:this.lifeManager.getLife()});
+                this.scene.start("End", {res:1, vie:this.lifeManager.getLife(), level:this.level_number, sound_state: this.sound_state});
                 break;
             case 'GAME_OVER':
                 this.music.stop();
-                this.scene.start("End", {res:0, vie:this.lifeManager.getLife()});
+                this.scene.start("End", {res:0, vie:this.lifeManager.getLife(), level:this.level_number, sound_state: this.sound_state});
                 break;
             //paused si besoin ici
             default:
@@ -125,6 +138,8 @@ class SceneLevel extends Phaser.Scene{
         this.ball = this.physics.add.image(this.w/2, this.h/6 * 5, 'ball');
         Align.scaleToGameH(this.ball, 0.03);
 
+        this.ball.body.setCircle(this.ball.displayHeight/4.95 ); // Set the circle shape and radius for collision detection 
+            
         //COLLISIONS
         this.physics.add.collider(this.ball, this.layer);
         this.layer.setCollisionBetween(71,74)
@@ -144,30 +159,31 @@ class SceneLevel extends Phaser.Scene{
         //console.log("emmitter");
     }
     dragging_ball (){
-        let graphics = this.add.graphics();
+        var graphics = this.add.graphics();
         let coef = 2; // Vous pouvez ajuster le coefficient selon vos besoins
         var startPoint = null;
         var currentDistance;
         var angle;
         var ball = this.ball;
-        let moved = false;
+        var moved = false;
 
-        this.input.on('pointerdown', function (pointer) {
+        this.input.on('pointerdown',  (pointer) => {
             startPoint = new Phaser.Math.Vector2(pointer.x, pointer.y);
         });
 
 
-        this.input.on('pointermove', function (pointer) {
+        this.input.on('pointermove', (pointer) => {
             if (!startPoint) return;
             moved = true;
 
-            let res = trajectoire(graphics, startPoint, pointer, ball);
+            let res = trajectoire(graphics, startPoint, pointer, ball); // besoin de redéfinir les variables sinon pb de scope (je commence en javascript ok) 
             currentDistance = res[0] ;
             angle = res[1];
             
         });
 
-        this.input.on('pointerup',  (pointer) => {
+        this.input.on('pointerup', (pointer) => {
+            
             if (moved) {
             graphics.clear();
             shoot(ball, coef, currentDistance, angle); 
@@ -203,6 +219,8 @@ class SceneLevel extends Phaser.Scene{
          Align.scaleToGameW(this.reload, 0.12);
          this.reload.setInteractive();
          this.reload.on('pointerup', () => {
+           
+            if (this.sound_state == 1) this.sound.play('Change_sound', {volume: 0.5});
             this.music.stop();
              this.scene.restart();
                  }
@@ -211,8 +229,10 @@ class SceneLevel extends Phaser.Scene{
          Align.scaleToGameW(this.menu, 0.12);
          this.menu.setInteractive();
          this.menu.on('pointerdown', () => {
+            if (this.sound_state == 1) this.sound.play('Next_level', {volume: 0.1});
             this.music.stop();
-             this.scene.start("Menu");
+            console.log("menu" + this.sound_state);
+             this.scene.start("Menu",{sound_state : this.sound_state});
              
          }
          );
@@ -222,6 +242,7 @@ class SceneLevel extends Phaser.Scene{
 
 function trajectoire(graphics, startPoint, pointer,ball)  {
     graphics.clear();
+    
     var endPoint = new Phaser.Math.Vector2(pointer.x, pointer.y); // le nouveau point final
     var line = new Phaser.Geom.Line(startPoint.x, startPoint.y, endPoint.x, endPoint.y); // trajectoire
     
