@@ -21,6 +21,7 @@ class ScenePreload extends Phaser.Scene
         this.load.image('particles', 'assets/img/particles.png');
         this.load.image('ball', 'assets/img/game/bullet.png');
         this.load.image('star', 'assets/img/game/star.png');
+        
         //tiles loding
       
         this.load.image('tiles', 'assets/img/tilemap/Terrain32x32.png');
@@ -66,7 +67,7 @@ class ScenePreload extends Phaser.Scene
         //--------------- Title Screen sound -----------------
         this.load.audio('Title_sound', 'assets/audio/Title_screen.wav');
         //--------------- buttons sound -----------------
-        this.load.audio('button_intro', 'assets/audio/button.wav');
+       
         this.load.audio('button_sound', 'assets/audio/click2.mp3');
         //--------------- menu sound -----------------
         this.load.audio('Menu_sound', 'assets/audio/menu.wav');
@@ -80,6 +81,10 @@ class ScenePreload extends Phaser.Scene
         this.load.audio('Change_sound', 'assets/audio/menu_change.mp3');
         //--------------- next level sound -----------------
         this.load.audio('Next_level', 'assets/audio/next_level.mp3');
+        //--------------- bouncing sound -----------------
+        this.load.audio('Bouncing', 'assets/audio/bouncing.wav');
+        //--------------- collected sound -----------------
+        this.load.audio('collected', 'assets/audio/collected.wav');
 
     }
 

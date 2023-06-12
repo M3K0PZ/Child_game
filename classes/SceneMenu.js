@@ -24,6 +24,7 @@ class SceneMenu extends Phaser.Scene {
         this.buttonSize = 20; // Taille d'un bouton de niveau
         this.buttonSpacing = 50; // Espacement entre les boutons de niveau
         this.Scale = 6; // Facteur d'échelle des boutons de niveau
+        this.levels =12; // nombre de niveaux
         this.music = this.sound.add('Menu_sound');
         this.button = this.sound.add('button_sound');
     }
@@ -52,29 +53,14 @@ class SceneMenu extends Phaser.Scene {
 
         this.buttonSize = this.buttonSize*this.Scale;
 
+        
 
-
-        //connait les niveaucx, et les emplacements de collectibles
-        this.levels = [
-            { name: "level1", collectibles: { 1: [200, 200], 2: [304, 31] } },
-            { name: "level2", collectibles: { 1: [100, 400], 2: [204, 31] } },
-            { name: "level3", collectibles: { 1: [300, 400], 2: [404, 31] } },
-            { name: "level4", collectibles: { 1: [500, 400], 2: [604, 31] } },
-            { name: "level5", collectibles: { 1: [700, 400], 2: [804, 31] } },
-            { name: "level6", collectibles: { 1: [900, 400], 2: [1004, 31] } },
-            { name: "level7", collectibles: { 1: [110, 400], 2: [104, 31] } },
-            { name: "level8", collectibles: { 1: [130, 400], 2: [144, 31] } },
-            { name: "level9", collectibles: { 1: [150, 400], 2: [164, 31] } },
-            { name: "level10", collectibles: { 1: [100, 400], 2: [184, 31] } },
-            { name: "level11", collectibles: { 1: [100, 400], 2: [204, 31] } },
-            { name: "level12", collectibles: { 1: [100, 400], 2: [204, 31] } },
-          
-        ];
+       
 
 
 
         // Calcul du nombre total de pages en fonction du nombre de niveaux et du nombre de niveaux par page
-        const totalPages = Math.ceil(this.levels.length / this.levelsPerPage);
+        const totalPages = Math.ceil(this.levels / this.levelsPerPage);
 
         // Création des boutons de niveau pour la page actuelle
         this.createLevelButtons();
@@ -137,9 +123,8 @@ class SceneMenu extends Phaser.Scene {
         const gridStartX = centerX - gridSpacingX / 2;
         const gridStartY = centerY - gridSpacingY / 2 + (this.buttonSize + this.buttonSpacing) / 2; // Ajout de la moitié de la hauteur d'un bouton
     
-        for (let i = startIndex; i < endIndex && i < this.levels.length; i++) {
-            const level = this.levels[i]; // plus tard dans la scene level, on pourra utiliser level.collectibles pour placer les collectibles
-    
+        for (let i = startIndex; i < endIndex && i < this.levels; i++) {
+            
             const gridX = (i - startIndex) % gridWidth;
             const gridY = Math.floor((i - startIndex) / gridWidth);
     

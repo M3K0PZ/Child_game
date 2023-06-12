@@ -2,7 +2,7 @@ class LifeManager {
   constructor() {
     this.gameObject; // Référence au gameObject associé
     this.playerLife; // Nombre de vies du joueur
-    this.lifeText ; // Référence au texte affichant la vie
+    
     this.collectibles; // Référence au groupe de collectibles pour gagner
     this.CurrentState;
   
@@ -14,7 +14,7 @@ class LifeManager {
     });
   }
 
-  init(scene, i, lifeCount, gameObj) {
+  init(scene, lifeCount, gameObj) {
     this.playerLife = lifeCount;
     this.gameObject = gameObj;
     // Affichage du texte de vie en haut à droite de l'écran de la scène spécifiée
@@ -25,20 +25,12 @@ class LifeManager {
       heart.setScrollFactor(0);
       this.hearts.add(heart);
     }
-    
-
-    this.lifeText = scene.add.text(
-      40,
-      10,
-      `Vie: ${this.playerLife}`,
-      { font: "20px Arial", fill: "#ffffff" }
-    );
-    
-    this.updateLifeText();
     this.CurrentState = this.States.PLAYING;
+
     
+  }
+  setCollectibles(i){
     this.collectibles = i;
-    
   }
 
   pause() { 
@@ -49,19 +41,16 @@ class LifeManager {
     this.playerLife--;
     //change the heart image to empty_heart
     this.hearts.getChildren()[this.playerLife].setTexture('empty_heart');
-  
 
-    this.updateLifeText();
     this.checkGameOver();
   }
 
-  updateLifeText() {
-    this.lifeText.setText(`Vie: ${this.playerLife}`);
-  }
+ 
   
 
   Collected(){
     this.collectibles--;
+    console.log(" collectibles left : "+this.collectibles);
     if(this.collectibles <= 0){
       this.checkWin();
     }

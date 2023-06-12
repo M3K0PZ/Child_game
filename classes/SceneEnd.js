@@ -50,7 +50,7 @@ class SceneEnd extends Phaser.Scene
         if (this.sound_state == 1){
         this.music.play();
         this.music.loop = true;
-        this.music.volume = 0.3; // volume ici 
+        this.music.volume = 0.5; // volume ici 
         }
         this.particle = 'croix';
 

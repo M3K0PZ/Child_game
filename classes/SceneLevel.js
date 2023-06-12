@@ -8,15 +8,36 @@ class SceneLevel extends Phaser.Scene{
     init(data) {
         this.level_number = data?.level; // level number  (to be used in factory to create the level layout)
         this.sound_state = data?.sound_state; // sound on/off
+        
         //console.log("level : "+this.level_number);
         console.log("sound : "+this.sound_state);
+
+         //connait les niveaux, et les emplacements de collectibles
+         this.levels = [
+            { name: "level1", collectibles: { 1: [320, 640] } },
+            { name: "level2", collectibles: { 1: [130 ,400], 2:[530,400] } },
+            { name: "level3", collectibles: { 1: [118,600], 2: [514, 600] } },
+            { name: "level4", collectibles: { 1: [575, 630], 2: [330, 300] } },
+            { name: "level5", collectibles: { 1: [190, 185], 2: [450, 185] } },
+            { name: "level6", collectibles: { 1: [190, 185], 2: [450, 185] } },
+            { name: "level7", collectibles: { 1: [220, 700], 2: [375, 440] } },
+            { name: "level8", collectibles: { 1: [245,440], 2: [410,700] } },
+            { name: "level9", collectibles: { 1: [240,125], 2: [400, 125] } },
+            { name: "level10", collectibles: { 1: [66,600], 2: [450,630], 3:[290,420] } },
+            { name: "level11", collectibles: { 1: [60,475], 2: [570,475], 3:[325,425] } },
+            { name: "level12", collectibles: { 1: [190,185], 2: [454,185], 3:[320,640] } },
+          
+        ];
       }
-      
+    
     preload ()
     {    
     } 
     create () 
     {
+
+
+
         this.cameras.main.flash();
 
         ////console.log("Game scene");
@@ -33,7 +54,7 @@ class SceneLevel extends Phaser.Scene{
         this.h = game.scale.height;
         this.w = game.scale.width; 
   
-
+        
 
         //CREATION DE LA MAP, factory plus tard
         this.mapping();
@@ -49,16 +70,17 @@ class SceneLevel extends Phaser.Scene{
         if(this.lifeManager == undefined) this.lifeManager = new LifeManager(); // you can use a life manager with an life class, the manager keeping track of lifes, 
                                               //making multiples lifes for mulitples objects, but since there will be only one ball (eq. player), i don't.
                                               //but that's why i kept a init function and a new lifeManager separated, if needed.
-        this.lifeManager.init(this, 1,3,this.ball);
-
+        this.lifeManager.init(this, 3,this.ball);
+    
         
         // GESTION DU DRAG AND DROP
         this.dragging_ball ();
         //console.log("dragging done");
 
         // AJOUT DES COLLECTIBLES ET DE LEURS DETECTIONS (dans factory plus tard, changera en fct du lvl)
-        this.add_collectibles();
+       // this.add_collectibles();
         //console.log("collectibles added");
+        this.add_collectibles(this.levels[this.level_number-1].collectibles);
 
         this.add_buttons();    
         //console.log("buttons added");
@@ -92,6 +114,7 @@ class SceneLevel extends Phaser.Scene{
 
     }
     mapping(){
+        console.log("mapping");
         //Tile sizing : 20x40 en 16px
         //let tilesize_widht = w /20;
         //let tilesize_height = h/40;
@@ -99,6 +122,12 @@ class SceneLevel extends Phaser.Scene{
         //background loading
         Align.scaleToGameW(this.add.image(this.w/2,  this.h/2, 'Sky'), 1);
 
+        if (this.level_number > 12){
+            console.log("level number too high");
+            // fin des niveaux, éran de fin
+            //this.scene.start("FinalEnd");
+            
+        }
 
         //map loading
         var level_to_load = "level"+this.level_number;
@@ -115,6 +144,7 @@ class SceneLevel extends Phaser.Scene{
         Align.scaleToGameW(this.layer_map,1);
 
         
+
 
         //new tiles walls loading for a better look with the css background
         const ship = this.make.tilemap({key:"ship",tileWidth:16,tileHeight:16});
@@ -136,12 +166,16 @@ class SceneLevel extends Phaser.Scene{
 
         // AJOUT BALLE
         this.ball = this.physics.add.image(this.w/2, this.h/6 * 5, 'ball');
+        this.ball.id = 1; // this id will be used to identify the shape in the collision detection.
+
         Align.scaleToGameH(this.ball, 0.03);
 
         this.ball.body.setCircle(this.ball.displayHeight/4.95 ); // Set the circle shape and radius for collision detection 
             
         //COLLISIONS
-        this.physics.add.collider(this.ball, this.layer);
+        this.physics.add.collider(this.ball, this.layer, () => {
+            if (this.sound_state == 1) this.sound.play('Bouncing', {volume: 0.2});
+        });
         this.layer.setCollisionBetween(71,74)
             .setVisible(false);
 
@@ -168,6 +202,7 @@ class SceneLevel extends Phaser.Scene{
         var moved = false;
 
         this.input.on('pointerdown',  (pointer) => {
+            console.log(pointer.x, pointer.y);
             startPoint = new Phaser.Math.Vector2(pointer.x, pointer.y);
         });
 
@@ -192,27 +227,114 @@ class SceneLevel extends Phaser.Scene{
             }
         });
     }
-    add_collectibles(){
-        //un rond, un carré et une étoile plus tard, tests en cours [20%]
-        this.star = this.add.star(this.w/2, this.h/2, 5, this.h*0.010, this.h*0.015, 0xecf80b);
-        // Enable physics on the star
-        this.physics.world.enable(this.star);
-        this.star.body.setImmovable(true); // Make the star immovable
-        // Set the star's properties
-        this.star.body.setCircle(this.h*0.015); // Set the circle shape and radius for collision detection
-        // Add collision between the ball and the star
 
-        this.physics.add.overlap(this.ball, this.star, (ball, star)=>{
-            this.cameras.main.flash();
-            star.destroy();
-            this.lifeManager.Collected();
-            this.ball.x = game.scale.width/2;
-            this.ball.y = this.h/6 * 5
-            this.ball.setVelocity(0, 0);
-        }); 
-
+    add_collectibles(collectibles) {
         
-    }
+        // need to collect 3 collectibles to win
+        //print the collectibles lenght
+        this.lifeManager.setCollectibles(Object.keys(collectibles).length);
+        
+        for (const key in collectibles) {
+          const position = collectibles[key];
+          const collectibleType = parseInt(key);
+          switch (collectibleType) {
+            case 1:
+                console.log("collectible 1");
+               
+
+
+              const star = this.add.star(position[0], position[1], 5, this.h * 0.015, this.h * 0.030, 0xecf80b);
+              this.physics.world.enable(star);
+              star.body.setImmovable(true);
+              star.body.setCircle(this.h * 0.030);
+              this.physics.add.overlap(this.ball, star, (ball, collectible) => {
+                    if (this.sound_state == 1)  this.sound.play('collected', {volume: 0.2});
+                    if (this.ball.id == 1) {
+                    this.cameras.main.flash();
+                    collectible.destroy();
+                    this.lifeManager.Collected();
+                    this.ball.x = game.scale.width / 2;
+                    this.ball.y = this.h / 6 * 5;
+                    this.ball.setVelocity(0, 0);
+
+                    this.ball.id ++;
+                }else {
+                    this.cameras.main.flash();
+                    this.lifeManager.decreaseLife();
+                    this.ball.x = game.scale.width / 2;
+                    this.ball.y = this.h / 6 * 5;
+                    this.ball.setVelocity(0, 0);
+                }
+            }
+              
+              );
+              break;
+              
+            case 2:
+                console.log("collectible 2");
+               
+
+                const triangle = this.add.triangle(position[0], position[1] + 40, -40, 40, 40, 40, 0, -40, 0x00ff00);
+
+
+              this.physics.world.enable(triangle);
+              triangle.body.setImmovable(true);
+              triangle.body.setCircle(40, -40, -30);
+              this.physics.add.overlap(this.ball, triangle, (ball, collectible) => {
+                if (this.ball.id == 2) {
+                    if (this.sound_state == 1)  this.sound.play('collected', {volume: 0.2});
+                    this.cameras.main.flash();
+                    collectible.destroy();
+                    this.lifeManager.Collected();
+                    this.ball.x = game.scale.width / 2;
+                    this.ball.y = this.h / 6 * 5;
+                    this.ball.setVelocity(0, 0);
+
+                    this.ball.id ++;
+                }else {
+                    this.cameras.main.flash();
+                    this.lifeManager.decreaseLife();
+                    this.ball.x = game.scale.width / 2;
+                    this.ball.y = this.h / 6 * 5;
+                    this.ball.setVelocity(0, 0);
+                }
+              });
+              break;
+              
+            case 3:
+                
+
+                console.log("collectible 3");
+            const circle = this.add.circle(position[0], position[1],20 ,  0x1663de);
+
+              this.physics.world.enable(circle);
+              circle.body.setImmovable(true);
+              circle.body.setCircle(20);
+              this.physics.add.overlap(this.ball, circle, (ball, collectible) => {
+                if (this.ball.id == 3) {
+                    if (this.sound_state == 1)  this.sound.play('collected', {volume: 0.2});
+                    this.cameras.main.flash();
+                    collectible.destroy();
+                    this.lifeManager.Collected();
+                    this.ball.x = game.scale.width / 2;
+                    this.ball.y = this.h / 6 * 5;
+                    this.ball.setVelocity(0, 0);
+                }else {
+                    this.cameras.main.flash();
+                    this.lifeManager.decreaseLife();
+                    this.ball.x = game.scale.width / 2;
+                    this.ball.y = this.h / 6 * 5;
+                    this.ball.setVelocity(0, 0);
+                }
+              });
+              break;
+              default:
+                console.log("UNEXPECTED CRITICAL ERROR COLLECTIBLES");
+                break;
+          }
+        }
+      }
+      
     add_buttons(){
          // display the button reload on the top right and the menu button on the top left
          this.reload = this.add.image(this.w/20 * 19 -45, this.h/20 +15, 'reload_button');
