@@ -7,9 +7,9 @@ class SceneMenu extends Phaser.Scene {
         this.levels = data?.levels;
         if (data?.sound_state) {
             this.sound_state = data.sound_state;
-            console.log("sound_state menu = " + this.sound_state);
+          
         } else {
-            console.log("sound_state menu not initialzed");
+         
             this.sound_state = 1;
         }
         // architecture de data.levels
@@ -22,7 +22,7 @@ class SceneMenu extends Phaser.Scene {
         this.currentPage = 0;
         this.levelsPerPage = 9; // Nombre de niveaux par page
         this.buttonSize = 20; // Taille d'un bouton de niveau
-        this.buttonSpacing = 50; // Espacement entre les boutons de niveau
+        this.buttonSpacing = 59; // Espacement entre les boutons de niveau
         this.Scale = 6; // Facteur d'échelle des boutons de niveau
         this.levels =12; // nombre de niveaux
         this.music = this.sound.add('Menu_sound');
@@ -105,6 +105,19 @@ class SceneMenu extends Phaser.Scene {
                 this.soundIcon.setTexture('Sound_on');
             }
         });
+
+        
+        //add button home 
+        this.home = this.add.image(this.w/2, this.h/9 *2, 'home');
+        Align.scaleToGameW(this.home, 0.2);
+        this.home.setInteractive();
+        this.home.on('pointerdown', () => {
+            this.music.stop();
+            if (this.sound_state == 1) this.sound.play('Next_level', {volume: 0.1});
+            this.scene.start("Starting", {sound_state : this.sound_state});
+
+        }
+        );
     }
 
     createLevelButtons() {

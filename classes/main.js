@@ -18,7 +18,9 @@ const config ={
             SceneCaramel,
             SceneLevel, 
             SceneEnd,
-            SceneMenu
+            SceneMenu,
+            SceneStarting,
+            SceneFinalEnd
         ]
 
 };

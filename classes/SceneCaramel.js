@@ -17,15 +17,16 @@ class SceneCaramel extends Phaser.Scene{
         
         
         this.tweens.add({
-            alpha: 1,
+            alpha: 10,
             targets: [this.caramel],
             ease: 'Cubic.easeIn', 
             duration: 1000,
-            hold: 1000,
+            hold: 1500,
             repeat:0,
             yoyo: true,
             onComplete: () => {
-                this.scene.start("level");
+                this.scene.start("Starting"); 
+        
                 
             }
         });

@@ -17,6 +17,14 @@ class SceneEnd extends Phaser.Scene
     
     create(){
 
+        
+        if (this.current_level >= 12){
+            console.log("end");
+            // fin des niveaux, éran de fin
+            this.scene.start("Ending", {sound_state : this.sound_state});
+            
+        }else {
+
         // get the dimensions of the game
         const width = this.scale.width;
         const height = this.scale.height;
@@ -107,6 +115,7 @@ class SceneEnd extends Phaser.Scene
             
             rotate: { min: -15, max: 15 } 
         });
+    }
     }
     
    

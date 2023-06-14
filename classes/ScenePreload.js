@@ -11,16 +11,17 @@ class ScenePreload extends Phaser.Scene
         this.load.image('next_button', 'assets/img/buttons/next.png');
         this.load.image('reload_button', 'assets/img/buttons/reload.png');
         this.load.image('menu', 'assets/img/buttons/Menu.png');
+        this.load.image('home', 'assets/img/buttons/home.png');
         
         //---------------scene caramel-----------------
         this.load.image('caramel', 'assets/img/caramel1.png');
 
         //---------------scene level-----------------
-        this.load.image('base', 'assets/img/background/base.png');
         this.load.image('Sky', 'assets/img/background/Sky.png');
         this.load.image('particles', 'assets/img/particles.png');
         this.load.image('ball', 'assets/img/game/bullet.png');
         this.load.image('star', 'assets/img/game/star.png');
+        this.load.image('triangle', 'assets/img/game/triangle.png');
         
         //tiles loding
       
@@ -47,6 +48,17 @@ class ScenePreload extends Phaser.Scene
         this.load.image('croix', 'assets/img/buttons/croix.png');
         this.load.image('coupe', 'assets/img/buttons/coupe.png');
 
+
+        //---------------scene starting-----------------
+        this.load.image('ButtonStart', 'assets/img/buttons/play.png');
+        this.load.image('info', 'assets/img/buttons/info.png');
+        this.load.image('homescreen', 'assets/img/background/start_scene.png');
+
+        //---------------scene final ending-----------------
+
+        this.load.image('FinalScreen', 'assets/img/background/end_scene.png');
+        this.load.image('coin', 'assets/img/end/particles.png');
+
         /////////////////// LEVELS LOADING /////////////////////
         this.load.tilemapTiledJSON('level1', 'assets/img/tilemap/levels/level1.tmj');
         this.load.tilemapTiledJSON('level2', 'assets/img/tilemap/levels/level2.tmj');
@@ -60,6 +72,7 @@ class ScenePreload extends Phaser.Scene
         this.load.tilemapTiledJSON('level10', 'assets/img/tilemap/levels/level10.tmj');
         this.load.tilemapTiledJSON('level11', 'assets/img/tilemap/levels/level11.tmj');
         this.load.tilemapTiledJSON('level12', 'assets/img/tilemap/levels/level12.tmj');
+    
 
         
 
@@ -85,14 +98,21 @@ class ScenePreload extends Phaser.Scene
         this.load.audio('Bouncing', 'assets/audio/bouncing.wav');
         //--------------- collected sound -----------------
         this.load.audio('collected', 'assets/audio/collected.wav');
+        //--------------- final sound -----------------
+        this.load.audio('Final_music', 'assets/audio/FinalMusic.mp3');
+        //--------------- Starting sound -----------------
+        this.load.audio('Starting_music', 'assets/audio/Starting_music.mp3');
+        //--------------- hit sound -----------------
+        this.load.audio('hit', 'assets/audio/hit_sound.mp3');
 
     }
 
     create(){
         //console.log("Preload scene");
-        this.scene.start("Menu");
-        //this.scene.start("End", {res:0, vie:3});
-        //this.scene.start("level");
+        this.scene.start("caramel"); 
+        
+    
+       
        
 
     }
