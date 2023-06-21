@@ -1,0 +1,13 @@
+
+body {
+    background-image:url('assets/img/background/Background.gif');
+	/*make the background image full screen*/
+	background-repeat:no-repeat;
+	background-size:cover;
+	background-position:center center;
+	background-attachment:fixed;
+
+
+    height:100%;
+    width:100%;
+}
