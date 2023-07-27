@@ -11,7 +11,7 @@ const config ={
     type: Phaser.AUTO,
     transparent: true,
     pixelArt: true,
-    physics : {default : "arcade", arcade:{debug: false}},
+    physics : {default : "arcade", arcade:{debug: true}},
 
     scene : [
             ScenePreload,
