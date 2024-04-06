@@ -1,5 +1,5 @@
 # Child_game
-I created this repo for my internship, i had to develop a small game using phaser (js framework). The game had to be phone sized, no text and clear, it's for children from 4 to 6 y old, for 65 different languages (never code in js nor phaser before this project)
+I created this repo for my internship, I had to develop a small game using phaser (js framework). The game had to be playable on a phone, easy to pick-up with no reading knowledge, it's made for children from 4 to 6 years of age, for 65 different languages (I had never coded in js nor phaser before this project)
 
 # Shape Swing
 
